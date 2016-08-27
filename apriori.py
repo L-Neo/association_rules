@@ -7,6 +7,8 @@
 # Author: Pete Harrington
 # Page: 229
 
+import pandas as pd
+
 def CreateBaseSet(transactions):
     """
     Creates sets of single items from a list of transactions.
@@ -87,6 +89,9 @@ def Apriori(transactions, min_support=0.01):
     Args:
         transactions (list): A list of transactions. Each transaction is a list of items.
         min_support (float): The minimum support required for each itemset.
+
+    Returns:
+        itemsets_support (dataframe): A dataframe with the itemsets and their corresponding support values.
     """
     min_support = float(min_support)
 
@@ -100,4 +105,9 @@ def Apriori(transactions, min_support=0.01):
         itemsets_support.update(new_itemsets_support)
         all_itemsets += remaining_items
 
-    return all_itemsets, itemsets_support
+    itemsets_support = pd.DataFrame.from_dict(itemsets_support, orient='index').reset_index()
+    itemsets_support.columns = ['itemsets','support']
+    itemsets_support.sort_values(by='support', ascending=False, inplace=True)
+    itemsets_support.reset_index(inplace=True, drop=True)
+
+    return itemsets_support
